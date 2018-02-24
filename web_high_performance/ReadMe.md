@@ -214,8 +214,8 @@ sock.listen(10)
 while True:
     client,addr = sock.accept()
     data=client.recv(8096)
-    client.sendall(b'/ HTTP/1.1 200 OK\r\n\r\n')  # 注意正规的响应头，否则客户端接收不到响应数据
-    client.sendall(b'xxxxx')
+    client.send(b'/ HTTP/1.1 200 OK\r\n\r\n')  # 注意正规的响应头，否则客户端接收不到响应数据
+    client.send(b'xxxxx')
     client.close()
 ```
 
