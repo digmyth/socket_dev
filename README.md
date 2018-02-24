@@ -348,8 +348,38 @@ socket_client客户端一个线程并发socket请求，就要用到socket+select
 
 Tornado虽然是web框架，但 `from tornado import httpclient`是socket客户端socket，用于并发http请求，这点注意
 
+一个基于select+非阻塞socket的socket客户端并发示例
 ```
-s
+import socket,time,select
+
+inputs = []
+conn_inputs = []
+
+for i in range(10):
+    client = socket.socket()
+    client.setblocking(False)
+    try:
+        client.connect(('220.181.111.188',80))  # 百度ip
+    except BlockingIOError as e:
+        pass
+
+    conn_inputs.append(client)
+    while True:
+        r,w,e=select.select(inputs,conn_inputs,[],0.05)
+        for obj in w: # 连接成功
+            v = "GET / HTTP/1.1\r\nHost: www.baidu.com\r\n\r\n"
+            obj.sendall(v.encode())
+            conn_inputs.remove(obj)
+            inputs.append(obj)
+
+        for obj in r: #  有数据来了
+            data=obj.recv(4096)
+            print(data)
+            obj.close()
+            inputs.remove(obj)
+
+        if not inputs:
+            break
 
 ```
 
