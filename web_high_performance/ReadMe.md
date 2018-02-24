@@ -226,8 +226,9 @@ while True:
     client.close()
 ```
 
-这种是阻塞式的，我们加上setblocking(False)变为非阻塞式，就要引入select监听socket来回调执行数据处理了
+这种是阻塞式的，我们加上setblocking(False)变为非阻塞式，就要引入select监听socket来回调执行数据处理了，知识点是引入setblocking(False)后client,addr = sock.accept()就会报错，我们要用select去监听，保证连接成功后才进行client,addr = sock.accept()
+
 ```
-ss
+
 ```
 
