@@ -1,6 +1,8 @@
 # 所有高性能相关（异步非阻塞知识，异步非阻塞web框架）
 
-参考博客： http://www.cnblogs.com/wupeiqi/articles/6229292.html
+参考博客： 
+http://www.cnblogs.com/wupeiqi/articles/6229292.html
+http://www.cnblogs.com/wupeiqi/articles/6536518.html
 
 
 ## 一、 异步非阻塞知识
@@ -199,6 +201,10 @@ if __name__ == "__main__":
 
 
 ## 自定义web框架
+
+ 自定义web框架参考：http://www.cnblogs.com/wupeiqi/articles/6536518.html
+
+
 以前我们学习异步IO模块都是写socket客户端，Tornado `from tornado import httpclient`用来提高爬虫效率也是相关于socket客户端。
 
 这里我们是写socket服务端。
