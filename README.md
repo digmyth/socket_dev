@@ -384,7 +384,58 @@ if not inputs:
 
 如果要对外当模块来使用，还要在此基础上进行封装
 ```
-x
+import socket,time,select
+
+inputs = []
+conn_inputs = []
+
+class Request():
+    def __init__(self,sock,func,host):
+        self.sock = sock
+        self.func = func
+        self.host = host
+
+    def fileno(self):
+        return self.sock.fileno()
+
+def f1(data):
+    print('百度返回了',data)
+
+def f2(data):
+    print('必应返回了',data)
+
+url_list = [
+    ('www.baidu.com',f1),
+    ('www.bing.com',f2),
+]
+
+for url in url_list:
+    client = socket.socket()
+    client.setblocking(False)
+    try:
+        client.connect((url[0],80))  # 百度ip
+    except Exception as e:
+        pass
+    robj = Request(client,url[1],url[0])
+    conn_inputs.append(robj)
+
+while True:
+    r,w,e=select.select(inputs,conn_inputs,[],0.05)
+    for obj in w: # 连接成功
+        v = "GET / HTTP/1.1\r\nhost: %s\r\n\r\n" %(obj.host)
+        obj.sock.sendall(v.encode())
+        conn_inputs.remove(obj)
+        inputs.append(obj)
+
+    for obj in r: #  有数据来了
+        data=obj.sock.recv(8192)
+        obj.func(data)
+        # print(data)
+        obj.sock.close()
+        inputs.remove(obj)
+
+    if not inputs:
+        break
 ```
 
 
