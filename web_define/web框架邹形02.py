@@ -1,7 +1,6 @@
 
-自定义web框架邹形02，未加入异步非阻塞式的future/yield牛逼的东东
-'''
-
+# 自定义web框架邹形02，未加入异步非阻塞式的future/yield牛逼的东东
+# 直接运行即可访问接口： 127.0.0.1:8102/index
 import re
 import socket
 import select
@@ -158,5 +157,4 @@ routes = [
 app = Snow(routes)
 app.run(port=8012)
 
-'''
 
