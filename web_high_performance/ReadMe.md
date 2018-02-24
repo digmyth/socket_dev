@@ -221,14 +221,54 @@ sock.listen(10)
 while True:
     client,addr = sock.accept()
     data=client.recv(8096)
-    client.send(b'/ HTTP/1.1 200 OK\r\n\r\n')  # 注意正规的响应头，否则客户端接收不到响应数据
-    client.send(b'xxxxx')
+    # 知识点：这里要做的是取出请求头，请求体，根据请求url匹配routers,找到函数执行，得到结果后sendall(response)给浏览器完成请求。
+    # response = func()
+    client.sendall(b'/ HTTP/1.1 200 OK\r\n\r\ntest')  # 注意正规的响应头，否则客户端接收不到响应数据
     client.close()
 ```
 
 这种是阻塞式的，我们加上setblocking(False)变为非阻塞式，就要引入select监听socket来回调执行数据处理了，知识点是引入setblocking(False)后client,addr = sock.accept()就会报错，我们要用select去监听，保证连接成功后才进行client,addr = sock.accept()
 
+我们来看一个web框架邹形，主要是设计思想和逻辑
 ```
+import socket,select
 
+def f1(request):
+    return 'txt1'
+
+def f2(request):
+    return 'txt2'
+
+routers = [
+    ('/index.html',f1),
+    ('/home.html',f2),
+]
+
+sock = socket.socket()
+sock.setblocking(False)
+sock.bind(('127.0.0.1',9299))
+sock.listen(5)
+inputs = [sock,]
+while True:
+    r,w,e = select.select(inputs,[],[],0.05)
+    for conn in r:
+        if conn == sock:
+            client, addr = sock.accept()
+            client.setblocking(False)
+            inputs.append(client)
+        else:
+            data=conn.recv(4096)
+            print(data)
+            inputs.remove(conn)
+            request_url = '/index.html' # 假如这是从data里取出的
+            func = None
+            for x in routers:
+                if x[0] == request_url:
+                    func = x[1]
+                break
+            response = func(data)
+            v='/ HTTP/1.1  200 OK\r\n\r\n%s' %(response)
+            conn.sendall(v.encode())
+            conn.close()
 ```
 
