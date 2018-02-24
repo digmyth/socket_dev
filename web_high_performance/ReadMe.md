@@ -210,6 +210,8 @@ if __name__ == "__main__":
 
 这里我们是写socket服务端。
 
+#### 简单的web框架
+
 快速入手一个socket服务端程序
 ```
 import socket,select,time
@@ -272,8 +274,92 @@ while True:
             conn.close()
 ```
 
+#### 异步的web框架
+
+下面只对异步的web框架流程进行疏理，代码不展开了，有点多
+
+如果要实现异步非阻塞式的web框架，就要用到future知识
+
+当用户请求到来，服务端需作为客户端访问其它服务器（如mysql）,此时会创建future对象，把用户请求hang住，当有数据返回（mysql_data）,future对象内部调用ret=future.set_result(mysql_data)，再把结果ret传给callback,断开用户连接。
+
+在我们的项目中是模拟，手动创建了Future类
+```
+class Future(object):
+    """
+    异步非阻塞模式时封装回调函数以及是否准备就绪
+    """
+    def __init__(self, callback):
+        self.callback = callback
+        self._ready = False
+        self.value = None
+
+    def set_result(self, value=None):
+        self.value = value
+        self._ready = True
+
+    @property
+    def ready(self):
+        return self._ready
+```
+
+当用户请求http://127.0.0.1/async时得到future对象
+```
+def f1():
+    pass
+def async(request):
+    fur = Future(callback=f1)
+    yield fur
+```
+
+把这个future对象取出放字典形如{'conn':fur}
+```
+try:
+   while True:
+       r, w, et = select.select(self.inputs, [], self.inputs,0.005)
+       for conn in :
+           if sock == conn:
+              ...
+           else:
+               gen = self.process(conn)
+               if isinstance(gen, HttpResponse):
+                   conn.sendall(gen.response())
+                   self.inputs.remove(conn)
+                   conn.close()
+               else:
+                   yielded = next(gen)
+                   self.async_request_handler[conn] = yielded
+       self.polling_callback()
+```
+
+
+```
+def polling_callback(self):
+  """
+  遍历触发异步非阻塞的回调函数
+  :return:
+  """
+  for conn in list(self.async_request_handler.keys()):
+      yielded = self.async_request_handler[conn]
+      if not yielded.ready:
+          continue
+      if yielded.callback:   # 走这里代码前提是：yielded.ready=True并且yielded.callback存在
+          ret = yielded.callback(self.request, yielded)
+          conn.sendall(ret.response())
+      self.inputs.remove(conn)
+      del self.async_request_handler[conn]
+      conn.close()
+```
+
+这个知识点确实让我很兴奋，还能这么玩，对开发又有了新的认识，happy working day !!!
+
+#### 代码详细
+
 完整版请参考项目： 
 
+https://github.com/digmyth/socket_dev/tree/master/web_define
+
+
+http://www.cnblogs.com/wupeiqi/articles/6536518.html
 
 
 
