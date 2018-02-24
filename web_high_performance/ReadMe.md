@@ -1,6 +1,7 @@
 # 所有高性能相关（异步非阻塞知识，异步非阻塞web框架）
 
 参考博客： 
+
 http://www.cnblogs.com/wupeiqi/articles/6229292.html
 
 http://www.cnblogs.com/wupeiqi/articles/6536518.html
@@ -302,7 +303,7 @@ class Future(object):
         return self._ready
 ```
 
-当用户请求http://127.0.0.1/async时得到future对象
+当用户请求`http://127.0.0.1/async`时得到future对象
 ```
 def f1():
     pass
