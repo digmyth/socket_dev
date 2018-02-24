@@ -340,7 +340,19 @@ gevent.joinall([
 ])
 ```
 
-#### 自定义
+#### 自定义异步IO模块
+
+socket_client客户端一个线程并发socket请求，就要用到socket+select,一般爬虫才有一个socket_client并发多个socket客户端请求
+
+在爬虫项目中为了提高socket客户端并发，一般会用到异步IO模块： asyncio/gevent/,那么我们这里自定义IO模块就是编写socket客户端程序
+
+Tornado虽然是web框架，但 `from tornado import httpclient`是socket客户端socket，用于并发http请求，这点注意
+
+```
+s
+
+```
+
 
 
 ## 三、高性能异步非阻塞框架
