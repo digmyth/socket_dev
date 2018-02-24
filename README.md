@@ -364,23 +364,22 @@ for i in range(10):
         pass
 
     conn_inputs.append(client)
-    while True:
-        r,w,e=select.select(inputs,conn_inputs,[],0.05)
-        for obj in w: # 连接成功
-            v = "GET / HTTP/1.1\r\nHost: www.baidu.com\r\n\r\n"
-            obj.sendall(v.encode())
-            conn_inputs.remove(obj)
-            inputs.append(obj)
+while True:
+r,w,e=select.select(inputs,conn_inputs,[],0.05)
+for obj in w: # 连接成功
+    v = "GET / HTTP/1.1\r\nHost: www.baidu.com\r\n\r\n"
+    obj.sendall(v.encode())
+    conn_inputs.remove(obj)
+    inputs.append(obj)
 
-        for obj in r: #  有数据来了
-            data=obj.recv(4096)
-            print(data)
-            obj.close()
-            inputs.remove(obj)
+for obj in r: #  有数据来了
+    data=obj.recv(4096)
+    print(data)
+    obj.close()
+    inputs.remove(obj)
 
-        if not inputs:
-            break
-
+if not inputs:
+    break
 ```
 
 如果要对外当模块来使用，还要在此基础上进行封装
