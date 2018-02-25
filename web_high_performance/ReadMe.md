@@ -122,6 +122,7 @@ socket_client客户端一个线程并发socket请求，就要用到socket+select
 
 ## 二、异步非阻塞web框架
 
+### 2.1 市面常用web框架
 
 阻塞模式： 在一个线程内，一个请求未处理完成，后续请求一直等待（Django，Flask,Bottle）
           对于阻塞模式提高性能： 多线程多进程
@@ -133,13 +134,13 @@ socket_client客户端一个线程并发socket请求，就要用到socket+select
 https://github.com/digmyth/Tornado/blob/master/tornado_builtin_web_framework/Tornado%E5%BC%82%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E.md
 
 
-## 自定义web框架
+### 2.2 自定义web框架
 
 以前我们学习异步IO模块都是写socket客户端，Tornado `from tornado import httpclient`用来提高爬虫效率也是相关于socket客户端。
 
 这里我们是写socket服务端。
 
-#### 简单的web框架
+#### 2.2.1 自定义简单的web框架
 
 快速入手一个socket服务端程序
 ```
@@ -203,7 +204,7 @@ while True:
             conn.close()
 ```
 
-#### 异步的web框架
+#### 2.2.2 自定义异步的web框架
 
 下面只对异步的web框架流程进行疏理，代码不展开了，有点多
 
@@ -281,7 +282,7 @@ def polling_callback(self):
 
 这个知识点确实让我很兴奋，还能这么玩，对开发又有了新的认识，happy working day !!!
 
-#### 代码详细
+#### 2.3 代码详细
 
 完整版请参考项目： 
 
